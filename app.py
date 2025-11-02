@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 from preprocessing import build_transformer, preprocess_features, encode_target, scale_target, only_numeric_check
 from model_training import train_classifiers, train_regressors, run_unsupervised
 
@@ -31,6 +32,34 @@ if page == 'Train a Model':
         df = pd.read_csv(uploaded)
         st.subheader('Dataset preview')
         st.dataframe(df.head())
+
+
+        st.subheader("Data Distribution Overview")
+
+        num_cols = df.select_dtypes(include=['int64', 'float64']).columns
+        cat_cols = df.select_dtypes(include=['object', 'category']).columns
+
+        if len(num_cols) > 0:
+            st.write("### Numerical Feature Distributions")
+            fig, axes = plt.subplots(nrows=(len(num_cols) + 2)//3, ncols=3, figsize=(15, 10))
+            axes = axes.flatten()
+            for i, col in enumerate(num_cols):
+                sns.histplot(df[col], kde=True, ax=axes[i], color='skyblue')
+                axes[i].set_title(col)
+            for j in range(i + 1, len(axes)):
+                fig.delaxes(axes[j])
+            st.pyplot(fig)
+
+        if len(cat_cols) > 0:
+            st.write("### Categorical Feature Distributions")
+            fig, axes = plt.subplots(nrows=(len(cat_cols) + 2)//3, ncols=3, figsize=(15, 10))
+            axes = axes.flatten()
+            for i, col in enumerate(cat_cols):
+                sns.countplot(y=col, data=df, ax=axes[i], palette='pastel')
+                axes[i].set_title(col)
+            for j in range(i + 1, len(axes)):
+                fig.delaxes(axes[j])
+            st.pyplot(fig)
 
         # Sidebar model selection and params
         st.sidebar.subheader('Supervision Type')
@@ -173,6 +202,33 @@ if page == 'Train a Model':
         df = pd.read_csv(uploaded)
         st.subheader('Dataset preview')
         st.dataframe(df.head())
+
+        st.subheader("Data Distribution Overview")
+
+        num_cols = df.select_dtypes(include=['int64', 'float64']).columns
+        cat_cols = df.select_dtypes(include=['object', 'category']).columns
+
+        if len(num_cols) > 0:
+            st.write("### Numerical Feature Distributions")
+            fig, axes = plt.subplots(nrows=(len(num_cols) + 2)//3, ncols=3, figsize=(15, 10))
+            axes = axes.flatten()
+            for i, col in enumerate(num_cols):
+                sns.histplot(df[col], kde=True, ax=axes[i], color='skyblue')
+                axes[i].set_title(col)
+            for j in range(i + 1, len(axes)):
+                fig.delaxes(axes[j])
+            st.pyplot(fig)
+
+        if len(cat_cols) > 0:
+            st.write("### Categorical Feature Distributions")
+            fig, axes = plt.subplots(nrows=(len(cat_cols) + 2)//3, ncols=3, figsize=(15, 10))
+            axes = axes.flatten()
+            for i, col in enumerate(cat_cols):
+                sns.countplot(y=col, data=df, ax=axes[i], palette='pastel')
+                axes[i].set_title(col)
+            for j in range(i + 1, len(axes)):
+                fig.delaxes(axes[j])
+            st.pyplot(fig)
 
         transformer = build_transformer(df)
         X_proc = preprocess_features(transformer, df)
